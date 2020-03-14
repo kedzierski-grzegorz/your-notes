@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "your-notes-dev": {
+      "hosting": {
+        "app": [
+          "your-notes-dev"
+        ]
+      }
+    }
+  }
+}
