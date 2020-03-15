@@ -16,12 +16,13 @@ import { AngularFirestoreModule } from '@angular/fire/firestore/public_api';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule,
+  imports: [
+    BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule.enablePersistence()
+    // AngularFirestoreModule.enablePersistence()
   ],
   providers: [
     StatusBar,

@@ -4,6 +4,7 @@ import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { AuthService } from './auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { of } from 'rxjs';
 
 fdescribe('AuthService', () => {
   let fireAuthSpyObj: jasmine.SpyObj<AngularFireAuth>;
@@ -15,7 +16,7 @@ fdescribe('AuthService', () => {
   beforeEach(() => {
     fireAuthSpyObj = {
       ...jasmine.createSpyObj('AngularFireAuth', ['signInWithEmailAndPassword']),
-      currentUser: Promise.resolve(null)
+      authState: of(null)
     };
 
     TestBed.configureTestingModule({
@@ -86,8 +87,8 @@ fdescribe('AuthService', () => {
     }));
 
     it('when user is logged but there is no matching user account in db in should throw error', fakeAsync(() => {
-      Object.defineProperty(fireAuthSpyObj, 'currentUser', {
-        value: Promise.resolve({ uid: 'sdsa' } as User)
+      Object.defineProperty(fireAuthSpyObj, 'authState', {
+        value: of({ uid: '12345' } as User)
       });
 
       service = new AuthService(fireAuthSpyObj, TestBed.get(AngularFirestore));
@@ -100,8 +101,8 @@ fdescribe('AuthService', () => {
     }));
 
     it('when user is logged in should return appUser', fakeAsync(() => {
-      Object.defineProperty(fireAuthSpyObj, 'currentUser', {
-        value: Promise.resolve({ uid: '12345' } as User)
+      Object.defineProperty(fireAuthSpyObj, 'authState', {
+        value: of({ uid: '12345' } as User)
       });
 
       service = new AuthService(fireAuthSpyObj, TestBed.get(AngularFirestore));
@@ -137,5 +138,6 @@ fdescribe('AuthService', () => {
         expect(user.firebaseUser.uid).toEqual('12345');
       });
     }));
+
   });
 });

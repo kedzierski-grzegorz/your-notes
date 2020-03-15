@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { User, app } from 'firebase';
+import { User, app, } from 'firebase';
+import { first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,9 @@ export class AuthService {
     return this.refreshUserData();
   }
 
-  constructor(private fireAuth: AngularFireAuth, private firestore: AngularFirestore) { }
+  constructor(private fireAuth: AngularFireAuth, private firestore: AngularFirestore) {
+    console.log(fireAuth.currentUser);
+  }
 
   signInWithEmail(email: string, password: string): Promise<AppUser> {
     return this.refreshUserData();
@@ -36,7 +39,7 @@ export class AuthService {
   refreshUserData(): Promise<AppUser> {
     const appUser: AppUser = {};
 
-    return new Promise((resolve, reject) => this.fireAuth.currentUser.then(user => {
+    return new Promise((resolve, reject) => this.fireAuth.authState.pipe(first()).toPromise().then(user => {
       if (user && user.uid) {
         this.firestore.collection('users', r => r.where('userId', '==', user.uid)).get().toPromise()
           .then(userDetails => {
