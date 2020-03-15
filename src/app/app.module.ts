@@ -11,7 +11,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore/public_api';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import 'firebase/firestore';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,7 +23,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore/public_api';
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     AngularFireModule.initializeApp(environment.firebase),
-    // AngularFirestoreModule.enablePersistence()
+    AngularFirestoreModule.enablePersistence()
   ],
   providers: [
     StatusBar,

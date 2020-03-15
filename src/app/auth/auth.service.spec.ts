@@ -1,3 +1,4 @@
+import { DocumentReference } from '@angular/fire/firestore/interfaces';
 import { User } from 'firebase';
 import { AngularFirestore, AngularFirestoreCollection, QuerySnapshot } from '@angular/fire/firestore';
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
@@ -78,7 +79,7 @@ fdescribe('AuthService', () => {
   });
 
   fdescribe('refreshUserData', () => {
-    it('when user is not logged in should throw error', fakeAsync(() => {
+    it('when user is not logged should throw error', fakeAsync(() => {
       spyOn(TestBed.get(AngularFirestore), 'collection').and.returnValue({
         get: () => ({ toPromise: () => Promise.resolve(null) })
       });
@@ -94,7 +95,7 @@ fdescribe('AuthService', () => {
       service = new AuthService(fireAuthSpyObj, TestBed.get(AngularFirestore));
 
       spyOn(TestBed.get(AngularFirestore), 'collection').and.returnValue({
-        get: () => ({ toPromise: () => Promise.reject(new Error('There is no user in db of the id')) })
+        doc: s => ({ get: () => ({ pipe: () => ({ toPromise: () => Promise.reject(new Error('There is no user in db of the id')) }) }) })
       });
 
       expectAsync(service.refreshUserData()).toBeRejectedWith(new Error('There is no user in db of the id'));
@@ -105,36 +106,25 @@ fdescribe('AuthService', () => {
         value: of({ uid: '12345' } as User)
       });
 
-      service = new AuthService(fireAuthSpyObj, TestBed.get(AngularFirestore));
+      service = new AuthService(fireAuthSpyObj, TestBed.inject(AngularFirestore));
 
       spyOn(TestBed.get(AngularFirestore), 'collection').and.returnValue({
-        get: () => ({
-          toPromise: () => Promise.resolve({
-            size: 1,
-            metadata: {},
-            empty: false,
-            query: {},
-            docs: [
-              {
-                data: () => {
-                  return {
-                    nick: 'nick',
-                    subscriptionDateEnd: new Date(),
-                    schoolId: 'schoolId',
-                    schoolName: 'tps'
-                  }
-                }
-              }
-            ]
+        doc: () => ({
+          get: () => ({
+            pipe: () => ({
+              toPromise: () => Promise.resolve({
+                subscriptionDateEnd: new Date(),
+                schoolRef: 'schoolId'
+              })
+            })
           })
-        })
+        }
+        )
       });
 
       service.refreshUserData().then(user => {
-        expect(user.nick).toEqual('nick');
         expect(user.subscriptionDateEnd).toBeTruthy();
-        expect(user.schoolId).toEqual('schoolId');
-        expect(user.schoolName).toEqual('tps');
+        expect(user.schoolRef).toBeDefined();
         expect(user.firebaseUser.uid).toEqual('12345');
       });
     }));

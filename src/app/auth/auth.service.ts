@@ -1,10 +1,8 @@
 import { AppUser } from './app-user.model';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { User, app, } from 'firebase';
-import { first } from 'rxjs/operators';
+import { first, map, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +19,6 @@ export class AuthService {
   }
 
   constructor(private fireAuth: AngularFireAuth, private firestore: AngularFirestore) {
-    console.log(fireAuth.currentUser);
   }
 
   signInWithEmail(email: string, password: string): Promise<AppUser> {
@@ -41,16 +38,12 @@ export class AuthService {
 
     return new Promise((resolve, reject) => this.fireAuth.authState.pipe(first()).toPromise().then(user => {
       if (user && user.uid) {
-        this.firestore.collection('users', r => r.where('userId', '==', user.uid)).get().toPromise()
+        this.firestore.collection('users').doc(user.uid).get().pipe(map(data => data.data()), take(1)).toPromise()
           .then(userDetails => {
-            if (userDetails && userDetails.size > 0) {
-              const data = userDetails.docs[0].data();
+            if (userDetails) {
               appUser.firebaseUser = user;
-              appUser.nick = data.nick;
-              appUser.subscriptionDateEnd = data.subscriptionDateEnd;
-              appUser.schoolId = data.schoolId;
-              appUser.schoolName = data.schoolName;
-
+              appUser.subscriptionDateEnd = userDetails.subscriptionDateEnd;
+              appUser.schoolRef = userDetails.schoolRef;
               this.currentUser = appUser;
 
               resolve(appUser);

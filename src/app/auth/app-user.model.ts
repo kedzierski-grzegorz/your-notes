@@ -1,9 +1,8 @@
 import { User } from 'firebase';
+import { DocumentReference } from '@angular/fire/firestore/interfaces';
 
 export interface AppUser {
     firebaseUser?: User;
-    schoolId?: string;
-    schoolName?: string;
+    schoolRef?: DocumentReference;
     subscriptionDateEnd?: Date;
-    nick?: string;
 }
