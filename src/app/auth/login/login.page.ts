@@ -9,10 +9,12 @@ import { Component, OnInit } from '@angular/core';
 export class LoginPage implements OnInit {
 
   constructor(private authService: AuthService) {
-
   }
 
   ngOnInit() {
   }
 
+  test() {
+    this.authService.signInWithFacebook().then(x => console.log(x)).catch(e => alert(e.message));
+  }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { first, map, take } from 'rxjs/operators';
+import * as firebase from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,14 @@ export class AuthService {
     return this.refreshUserData();
   }
 
-  constructor(private fireAuth: AngularFireAuth, private firestore: AngularFirestore) {
-  }
+  constructor(private fireAuth: AngularFireAuth, private firestore: AngularFirestore) { }
 
   signInWithEmail(email: string, password: string): Promise<AppUser> {
-    return this.refreshUserData();
+    return this.fireAuth.signOut().then(r => {
+      return this.fireAuth.signInWithEmailAndPassword(email, password).then(credentials => {
+        return this.refreshUserData();
+      }).catch(e => Promise.reject(e));
+    }).catch(e => Promise.reject(e));
   }
 
   signInWithGoogle(): Promise<AppUser> {
@@ -30,7 +34,12 @@ export class AuthService {
   }
 
   signInWithFacebook(): Promise<AppUser> {
-    return this.refreshUserData();
+    return this.fireAuth.signOut().then(r => {
+      return this.fireAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(r => {
+        alert(r.user.email);
+        return this.refreshUserData();
+      }).catch(e => Promise.reject(e));
+    }).catch(e => Promise.reject(e));
   }
 
   refreshUserData(): Promise<AppUser> {
