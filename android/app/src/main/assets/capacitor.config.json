@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "your-notes",
+  "appId": "pl.unionsoftware.yournotes",
+  "appName": "YourNotes",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
