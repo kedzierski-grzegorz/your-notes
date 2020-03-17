@@ -15,6 +15,6 @@ export class LoginPage implements OnInit {
   }
 
   test() {
-    this.authService.signInWithFacebook().then(x => console.log(x)).catch(e => alert(e.message));
+    this.authService.signInWithFacebook().then(x => alert(x)).catch(e => alert(e));
   }
 }

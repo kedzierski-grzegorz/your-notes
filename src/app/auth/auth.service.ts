@@ -35,9 +35,10 @@ export class AuthService {
 
   signInWithFacebook(): Promise<AppUser> {
     return this.fireAuth.signOut().then(r => {
-      return this.fireAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(r => {
-        alert(r.user.email);
-        return this.refreshUserData();
+      return this.fireAuth.signInWithRedirect(new firebase.auth.FacebookAuthProvider()).then(() => {
+        return this.fireAuth.getRedirectResult().then(r => {
+          return this.refreshUserData();
+        }).catch(e => Promise.reject(e));
       }).catch(e => Promise.reject(e));
     }).catch(e => Promise.reject(e));
   }
