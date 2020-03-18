@@ -8,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginPage implements OnInit {
 
+  email: string;
+
   constructor(private authService: AuthService) {
   }
 
@@ -15,6 +17,25 @@ export class LoginPage implements OnInit {
   }
 
   test() {
-    this.authService.signInWithFacebook().then(x => alert(x)).catch(e => alert(e));
+    this.authService.signInWithFacebook().then(x => {
+      console.log(x);
+      this.email = x.firebaseUser.email;
+    }).catch(e => console.log(e));
+  }
+
+  test2() {
+    this.authService.signInWithEmail('test@test.pl', 'password123').then(x => {
+      console.log(x);
+      this.email = x.firebaseUser.email;
+
+    }).catch(e => console.log(e));
+  }
+
+  test3() {
+    this.authService.signInWithGoogle().then(x => {
+      console.log(x);
+      this.email = x.firebaseUser.email;
+
+    }).catch(e => this.email = e.message);
   }
 }

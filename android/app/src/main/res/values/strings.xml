@@ -4,4 +4,6 @@
     <string name="title_activity_main">YourNotes</string>
     <string name="package_name">pl.unionsoftware.yournotes</string>
     <string name="custom_url_scheme">pl.unionsoftware.yournotes</string>
+    <string name="fb_app_id">205345060700294</string>
+    <string name="fb_app_name">YourNotes</string>
 </resources>
