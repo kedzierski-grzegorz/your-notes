@@ -40,27 +40,21 @@ export class AuthService {
 
   signInWithGoogle(): Promise<AppUser> {
     if (this.platform.is('cordova')) {
-      return this.fireAuth.signOut().then(r => {
-        this.fireAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
-        return this.fireAuth.getRedirectResult().then(u => {
-          return this.refreshUserData();
-        }).catch(e => Promise.reject(e));
-      }).catch(e => Promise.reject(e));
-      // return this.googlePlus.login({
-      //   webClientId: '904337676475-jl9hq2t8t0bravf7ikumpogve2v4ehjq.apps.googleusercontent.com',
-      //   offline: true
-      // }).then((response) => {
-      //   console.log(response);
-      //   const googleCredential = firebase.auth.GoogleAuthProvider.credential(response.idToken);
-      //   return this.fireAuth.signInWithCredential(googleCredential)
-      //     .then(u => {
-      //       console.log(u);
-      //       return this.refreshUserData();
-      //     }).catch(e => Promise.reject(e));
-      // }, (err) => {
-      //   console.log(err);
-      //   return Promise.reject(err);
-      // });
+      return this.googlePlus.login({
+        webClientId: '904337676475-jl9hq2t8t0bravf7ikumpogve2v4ehjq.apps.googleusercontent.com',
+        offline: true
+      }).then((response) => {
+        console.log(response);
+        const googleCredential = firebase.auth.GoogleAuthProvider.credential(response.idToken);
+        return this.fireAuth.signInWithCredential(googleCredential)
+          .then(u => {
+            console.log(u);
+            return this.refreshUserData();
+          }).catch(e => Promise.reject(e));
+      }, (err) => {
+        console.log(err);
+        return Promise.reject(err);
+      });
     } else {
       return this.fireAuth.signOut().then(r => {
         return this.fireAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(u => {

@@ -1,8 +1,0 @@
-{
-  "appId": "pl.unionsoftware.yournotes",
-  "appName": "YourNotes",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www",
-  "cordova": {}
-}

@@ -1,7 +1,8 @@
 {
   "name": "your-notes",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }

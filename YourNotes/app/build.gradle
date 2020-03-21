@@ -10,6 +10,13 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+                hostName: "your-notes-dev.firebaseapp.com",
+                defaultUrl: "https://your-notes-dev.firebaseapp.com",
+                launcherName: "YourNotes",
+                assetStatements: '[{ "relation": ["delegate_permission/common.handle_all_urls"], ' +
+                        '"target": {"namespace": "web", "site": "https://your-notes-dev.firebaseapp.com"}}]'
+        ]
     }
     buildTypes {
         release {
@@ -17,11 +24,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.github.GoogleChrome:custom-tabs-client:a0f7418972'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

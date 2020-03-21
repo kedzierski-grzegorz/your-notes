@@ -67,5 +67,12 @@
     "inquirer": "^6.2.2",
     "inquirer-autocomplete-prompt": "^1.0.1"
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-googleplus": {
+        "REVERSED_CLIENT_ID": "com.googleusercontent.apps.904337676475-jl9hq2t8t0bravf7ikumpogve2v4ehjq"
+      }
+    }
+  }
 }

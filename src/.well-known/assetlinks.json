@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "pl.unionsoftware.yournotes",
+      "sha256_cert_fingerprints": [
+        "54:72:E9:03:B9:2A:DB:07:F4:DC:7E:28:51:B2:7F:16:9B:B6:CB:2B:C0:B4:27:5C:B1:59:24:AC:73:E3:65:F6"
+      ]
+    }
+  }
+]
