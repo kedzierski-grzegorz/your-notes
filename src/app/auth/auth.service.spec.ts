@@ -16,7 +16,7 @@ fdescribe('AuthService', () => {
 
   beforeEach(() => {
     fireAuthSpyObj = {
-      ...jasmine.createSpyObj('AngularFireAuth', ['signInWithEmailAndPassword', 'signOut']),
+      ...jasmine.createSpyObj('AngularFireAuth', ['signInWithEmailAndPassword', 'signOut', 'signInWithPopup', 'setPersistence']),
       authState: of(null)
     };
 
@@ -28,6 +28,8 @@ fdescribe('AuthService', () => {
     });
 
     service = TestBed.get(AuthService);
+    fireAuthSpyObj.signOut.and.returnValue(Promise.resolve(null));
+    fireAuthSpyObj.setPersistence.and.returnValue(Promise.resolve());
   });
 
   it('should be created', () => {
@@ -65,33 +67,55 @@ fdescribe('AuthService', () => {
     }));
   });
 
-  fdescribe('signInWithFacebook', () => {
+  describe('signInWithFacebook', () => {
     beforeEach(() => {
       fireAuthSpyObj.signOut.and.returnValue(Promise.resolve());
       spyOn(service, 'refreshUserData').and.returnValue(Promise.resolve(null));
     });
 
     it('when credentials are correct should has currentUser', fakeAsync(() => {
-      // expectAsync(service.signInWithFacebook()).toBeResolved();
-      // expectAsync(service.signInWithFacebook()).toBeResolved();
+      fireAuthSpyObj.signInWithPopup.and.returnValue(Promise.resolve({ user: {}, additionalUserInfo: {} } as firebase.auth.UserCredential));
+      expectAsync(service.signInWithFacebook()).toBeResolved();
     }));
 
     it('when credentials are not correct should has no currentUser', fakeAsync(() => {
-      // service.signInWithFacebook();
-      // expect(service.getCurrentUser).toBeNull();
+      fireAuthSpyObj.signInWithPopup.and.returnValue(Promise.reject(new Error('')));
+      expectAsync(service.signInWithFacebook()).toBeRejected();
     }));
   });
 
   describe('signInWithGoogle', () => {
-    it('when credentials are correct should has currentUser', () => {
-      service.signInWithGoogle();
-      expect(service.getCurrentUser).toBeTruthy();
+    beforeEach(() => {
+      fireAuthSpyObj.signOut.and.returnValue(Promise.resolve());
+      spyOn(service, 'refreshUserData').and.returnValue(Promise.resolve(null));
     });
 
-    it('when credentials are not correct should has no currentUser', () => {
-      service.signInWithGoogle();
-      expect(service.getCurrentUser).toBeNull();
+    it('when credentials are correct should has currentUser', fakeAsync(() => {
+      fireAuthSpyObj.signInWithPopup.and.returnValue(Promise.resolve({ user: {}, additionalUserInfo: {} } as firebase.auth.UserCredential));
+      expectAsync(service.signInWithGoogle()).toBeResolved();
+    }));
+
+    it('when credentials are not correct should has no currentUser', fakeAsync(() => {
+      fireAuthSpyObj.signInWithPopup.and.returnValue(Promise.reject(new Error('')));
+      expectAsync(service.signInWithGoogle()).toBeRejected();
+    }));
+  });
+
+  describe('signOut', () => {
+    beforeEach(() => {
+      fireAuthSpyObj.signOut.and.returnValue(Promise.resolve());
+      spyOn(service, 'refreshUserData').and.returnValue(Promise.resolve(null));
     });
+
+    it('when user was signed out should resolve', fakeAsync(() => {
+      fireAuthSpyObj.signOut.and.returnValue(Promise.resolve());
+      expectAsync(service.signOut()).toBeResolved();
+    }));
+
+    it('when user was not signed out should reject', fakeAsync(() => {
+      fireAuthSpyObj.signOut.and.returnValue(Promise.reject());
+      expectAsync(service.signOut()).toBeRejected();
+    }));
   });
 
   describe('refreshUserData', () => {

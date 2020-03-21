@@ -5,13 +5,12 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { first, map, take } from 'rxjs/operators';
 import * as firebase from 'firebase';
-import { Facebook } from '@ionic-native/facebook/ngx';
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  readonly PERSISTANCE = firebase.auth.Auth.Persistence.LOCAL;
   private currentUser: AppUser;
 
   get getCurrentUser(): Promise<AppUser> {
@@ -24,64 +23,37 @@ export class AuthService {
 
   constructor(
     private fireAuth: AngularFireAuth,
-    private firestore: AngularFirestore,
-    private platform: Platform,
-    private fb: Facebook,
-    private googlePlus: GooglePlus
+    private firestore: AngularFirestore
   ) { }
 
   signInWithEmail(email: string, password: string): Promise<AppUser> {
     return this.fireAuth.signOut().then(r => {
-      return this.fireAuth.signInWithEmailAndPassword(email, password).then(credentials => {
-        return this.refreshUserData();
+      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
+        return this.fireAuth.signInWithEmailAndPassword(email, password).then(credentials => {
+          return this.refreshUserData();
+        }).catch(e => Promise.reject(e));
       }).catch(e => Promise.reject(e));
     }).catch(e => Promise.reject(e));
   }
 
   signInWithGoogle(): Promise<AppUser> {
-    if (this.platform.is('cordova')) {
-      return this.googlePlus.login({
-        webClientId: '904337676475-jl9hq2t8t0bravf7ikumpogve2v4ehjq.apps.googleusercontent.com',
-        offline: true
-      }).then((response) => {
-        console.log(response);
-        const googleCredential = firebase.auth.GoogleAuthProvider.credential(response.idToken);
-        return this.fireAuth.signInWithCredential(googleCredential)
-          .then(u => {
-            console.log(u);
-            return this.refreshUserData();
-          }).catch(e => Promise.reject(e));
-      }, (err) => {
-        console.log(err);
-        return Promise.reject(err);
-      });
-    } else {
-      return this.fireAuth.signOut().then(r => {
+    return this.fireAuth.signOut().then(r => {
+      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
         return this.fireAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(u => {
           return this.refreshUserData();
         }).catch(e => Promise.reject(e));
       }).catch(e => Promise.reject(e));
-    }
+    }).catch(e => Promise.reject(e));
   }
 
   signInWithFacebook(): Promise<AppUser> {
-    if (this.platform.is('cordova')) {
-      return this.fb.login(['public_profile']).then((response) => {
-        console.log(response);
-        const facebookCredential = firebase.auth.FacebookAuthProvider.credential(response.authResponse.accessToken);
-        return this.fireAuth.signInWithCredential(facebookCredential)
-          .then(u => {
-            console.log(u);
-            return this.refreshUserData();
-          }).catch(e => Promise.reject(e));
-      }, (err) => Promise.reject(err));
-    } else {
-      return this.fireAuth.signOut().then(r => {
+    return this.fireAuth.signOut().then(r => {
+      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
         return this.fireAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(u => {
           return this.refreshUserData();
         }).catch(e => Promise.reject(e));
       }).catch(e => Promise.reject(e));
-    }
+    }).catch(e => Promise.reject(e));
   }
 
   refreshUserData(): Promise<AppUser> {
@@ -109,5 +81,12 @@ export class AuthService {
         reject(new Error('User is not logged in'));
       }
     }).catch(e => reject(e)));
+  }
+
+  signOut(): Promise<void> {
+    return this.fireAuth.signOut().then(r => {
+      this.currentUser = null;
+      return Promise.resolve();
+    }).catch(e => Promise.reject(e));
   }
 }
