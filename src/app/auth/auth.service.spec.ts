@@ -1,13 +1,12 @@
-import { DocumentReference } from '@angular/fire/firestore/interfaces';
 import { User } from 'firebase';
-import { AngularFirestore, AngularFirestoreCollection, QuerySnapshot } from '@angular/fire/firestore';
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { TestBed, fakeAsync } from '@angular/core/testing';
 
 import { AuthService } from './auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { of } from 'rxjs';
 
-fdescribe('AuthService', () => {
+describe('AuthService', () => {
   let fireAuthSpyObj: jasmine.SpyObj<AngularFireAuth>;
 
   let service: AuthService;
@@ -16,7 +15,13 @@ fdescribe('AuthService', () => {
 
   beforeEach(() => {
     fireAuthSpyObj = {
-      ...jasmine.createSpyObj('AngularFireAuth', ['signInWithEmailAndPassword', 'signOut', 'signInWithPopup', 'setPersistence']),
+      ...jasmine.createSpyObj('AngularFireAuth', [
+        'signInWithEmailAndPassword',
+        'signOut',
+        'signInWithPopup',
+        'setPersistence',
+        'createUserWithEmailAndPassword'
+      ]),
       authState: of(null)
     };
 
@@ -36,12 +41,19 @@ fdescribe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('when user is logged in should has currentUser', () => {
-    expect(service.getCurrentUser).toBeTruthy();
+  it('when user is logged in should has currentUser', (done) => {
+    spyOnProperty(service, 'getCurrentUser').and.returnValue(of({}));
+
+    service.getCurrentUser.subscribe(u => {
+      expect(u).toBeTruthy();
+      done();
+    });
   });
 
   it('when user is not logged in should has no currentUser', () => {
-    expect(service.getCurrentUser).toBeNull();
+    service.getCurrentUser.subscribe(u => {
+      expect(u).toBeFalsy();
+    });
   });
 
   describe('signInWithEmail', () => {
@@ -64,6 +76,29 @@ fdescribe('AuthService', () => {
       );
 
       expectAsync(service.signInWithEmail(testEmail, testPassword)).toBeRejectedWith(new Error('Cannot sign in'));
+    }));
+  });
+
+  describe('signUpWithEmail', () => {
+    beforeEach(() => {
+      fireAuthSpyObj.signOut.and.returnValue(Promise.resolve());
+      spyOn(service, 'refreshUserData').and.returnValue(Promise.resolve(null));
+    });
+
+    it('when credentials are correct should has currentUser', fakeAsync(() => {
+      fireAuthSpyObj.createUserWithEmailAndPassword.and.returnValue(
+        Promise.resolve({ user: {}, additionalUserInfo: {} } as firebase.auth.UserCredential)
+      );
+
+      expectAsync(service.signUpWithEmail(testEmail, testPassword)).toBeResolved();
+    }));
+
+    it('when credentials are not correct should has no currentUser', fakeAsync(() => {
+      fireAuthSpyObj.createUserWithEmailAndPassword.and.returnValue(
+        Promise.reject(new Error('Cannot sign up'))
+      );
+
+      expectAsync(service.signUpWithEmail(testEmail, testPassword)).toBeRejectedWith(new Error('Cannot sign up'));
     }));
   });
 
@@ -142,11 +177,16 @@ fdescribe('AuthService', () => {
     }));
 
     it('when user is logged in should return appUser', fakeAsync(() => {
+      let user;
+
       Object.defineProperty(fireAuthSpyObj, 'authState', {
         value: of({ uid: '12345' } as User)
       });
 
       service = new AuthService(fireAuthSpyObj, TestBed.inject(AngularFirestore));
+      let userObs = service.getCurrentUser.subscribe(u => {
+        user = u;
+      });
 
       spyOn(TestBed.get(AngularFirestore), 'collection').and.returnValue({
         doc: () => ({
@@ -162,10 +202,11 @@ fdescribe('AuthService', () => {
         )
       });
 
-      service.refreshUserData().then(user => {
+      service.refreshUserData().then(s => {
         expect(user.subscriptionDateEnd).toBeTruthy();
         expect(user.schoolRef).toBeDefined();
         expect(user.firebaseUser.uid).toEqual('12345');
+        userObs.unsubscribe();
       });
     }));
 

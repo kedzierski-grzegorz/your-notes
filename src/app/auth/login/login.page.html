@@ -8,6 +8,6 @@
   <ion-button (click)="test()">Login fb</ion-button>
   <ion-button (click)="test2()">Login email</ion-button>
   <ion-button (click)="test3()">Login google</ion-button>
-  <h2 *ngIf="email">{{email}}</h2>
-  <h2 *ngIf="!email">Jeszcze</h2>
+  <h2 *ngIf="user">{{user.firebaseUser.email}}</h2>
+  <h2 *ngIf="!user">Jeszcze</h2>
 </ion-content>

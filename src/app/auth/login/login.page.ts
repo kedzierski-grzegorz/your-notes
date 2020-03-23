@@ -1,3 +1,4 @@
+import { AppUser } from './../app-user.model';
 import { AuthService } from './../auth.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -8,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginPage implements OnInit {
 
-  email: string;
+  user: AppUser;
 
   constructor(private authService: AuthService) {
+    authService.getCurrentUser.subscribe(u => {
+      this.user = u;
+    });
   }
 
   ngOnInit() {
@@ -19,23 +23,18 @@ export class LoginPage implements OnInit {
   test() {
     this.authService.signInWithFacebook().then(x => {
       console.log(x);
-      this.email = x.firebaseUser.email;
     }).catch(e => console.log(e));
   }
 
   test2() {
     this.authService.signInWithEmail('test@test.pl', 'password123').then(x => {
       console.log(x);
-      this.email = x.firebaseUser.email;
-
     }).catch(e => console.log(e));
   }
 
   test3() {
     this.authService.signInWithGoogle().then(x => {
       console.log(x);
-      this.email = x.firebaseUser.email;
-
-    }).catch(e => this.email = e.message);
+    }).catch(e => console.log(e));
   }
 }
