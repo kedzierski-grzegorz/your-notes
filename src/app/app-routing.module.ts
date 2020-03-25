@@ -15,7 +15,7 @@ const routes: Routes = [
     canActivateChild: [AuthGuard]
   },
   {
-    path: 'signup',
+    path: 'sign-up',
     loadChildren: () => import('./auth/signup/signup.module').then(m => m.SignupPageModule),
     canActivateChild: [AuthGuard]
   },

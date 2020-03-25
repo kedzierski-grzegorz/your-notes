@@ -27,29 +27,56 @@ describe('AuthGuard', () => {
     navigateSpy = spyOn(TestBed.get(Router), 'navigate').and.stub();
   });
 
-  it('when user is authenticated should let enter', () => {
+  it('when user is authenticated and enter to login or sing-up page should redirect to home', () => {
     Object.defineProperty(authServiceSpy, 'authState$', {
       value: of({})
     });
 
     guard = new AuthGuard(TestBed.get(Router), authServiceSpy);
 
-    ((guard.canActivateChild(null, null)) as Observable<boolean>).subscribe(r => {
+    ((guard.canActivateChild(null, { url: '/login' } as any)) as Observable<boolean>).subscribe(r => {
+      expect(r).toEqual(false);
+      expect(navigateSpy).toHaveBeenCalledWith(['/home']);
+    });
+
+    guard = new AuthGuard(TestBed.get(Router), authServiceSpy);
+
+    ((guard.canActivateChild(null, { url: '/sign-up' } as any)) as Observable<boolean>).subscribe(r => {
+      expect(r).toEqual(false);
+      expect(navigateSpy).toHaveBeenCalledWith(['/home']);
+    });
+  });
+
+  it('when user is authenticated and enter to home page should let enter', () => {
+    Object.defineProperty(authServiceSpy, 'authState$', {
+      value: of({})
+    });
+
+    guard = new AuthGuard(TestBed.get(Router), authServiceSpy);
+
+    ((guard.canActivateChild(null, { url: '/home' } as any)) as Observable<boolean>).subscribe(r => {
+      expect(r).toEqual(true);
+      expect(navigateSpy).toHaveBeenCalledTimes(0);
+    });
+
+    guard = new AuthGuard(TestBed.get(Router), authServiceSpy);
+
+    ((guard.canActivateChild(null, { url: '/test' } as any)) as Observable<boolean>).subscribe(r => {
       expect(r).toEqual(true);
       expect(navigateSpy).toHaveBeenCalledTimes(0);
     });
   });
 
-  it('when user is not authenticated should navigate to login page', () => {
+  it('when user is not authenticated and enter to home page should redirect to login', () => {
     Object.defineProperty(authServiceSpy, 'authState$', {
       value: of(null)
     });
 
     guard = new AuthGuard(TestBed.get(Router), authServiceSpy);
 
-    ((guard.canActivateChild(null, null)) as Observable<boolean>).subscribe(r => {
+    ((guard.canActivateChild(null, { url: '/home' } as any)) as Observable<boolean>).subscribe(r => {
       expect(r).toEqual(false);
-      expect(navigateSpy).toHaveBeenCalledTimes(1);
+      expect(navigateSpy).toHaveBeenCalledWith(['/login']);
     });
   });
 });

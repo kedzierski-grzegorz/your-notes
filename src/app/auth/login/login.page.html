@@ -1,7 +1,44 @@
 <ion-content>
-  <ion-button (click)="test()">Login fb</ion-button>
-  <ion-button (click)="test2()">Login email</ion-button>
-  <ion-button (click)="test3()">Login google</ion-button>
-  <h2 *ngIf="user">{{user.firebaseUser.email}}</h2>
-  <h2 *ngIf="!user">Jeszcze</h2>
+  <div class="container">
+    <h1>Your Notes</h1>
+    <ion-item class="ion-no-padding">
+      <ion-label position="floating" color="light">Email</ion-label>
+      <ion-input type="email" id="input-email"></ion-input>
+    </ion-item>
+    <ion-item class="ion-no-padding">
+      <ion-label position="floating" color="light">Hasło</ion-label>
+      <ion-input type="password" id="input-password"></ion-input>
+    </ion-item>
+    <ion-button
+      id="btn-sign-in-email"
+      (click)="test()"
+      class="ion-margin-vertical"
+    >
+      Zaloguj się
+    </ion-button>
+    <ion-button
+      [routerLink]="['/sign-up']"
+      class="ion-margin-vertical"
+      fill="outline"
+      color="medium"
+    >
+      Załóż konto
+    </ion-button>
+    <ion-button
+      id="btn-sign-in-facebook"
+      (click)="test2()"
+      class="ion-margin-vertical"
+    >
+      <ion-label>Zaloguj przez </ion-label>
+      <ion-icon name="logo-facebook" slot="end" class="ion-margin"></ion-icon>
+    </ion-button>
+    <ion-button
+      id="btn-sign-in-google"
+      (click)="test3()"
+      class="ion-margin-vertical"
+    >
+      <ion-label>Zaloguj przez </ion-label>
+      <ion-icon name="logo-google" slot="end" class="ion-margin"></ion-icon>
+    </ion-button>
+  </div>
 </ion-content>

@@ -1,0 +1,65 @@
+.container {
+  position: absolute;
+  background: url('/assets/images/login-bg.jpg');
+  background-size: cover;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  h1 {
+    color: white;
+    opacity: 0.87;
+    font-size: 3.6em;
+    margin-bottom: 1em;
+  }
+
+  .item-native {
+    background: unset;
+  }
+
+  ion-item {
+    margin-bottom: 1em;
+    width: 75%;
+    background-color: transparent;
+    --ion-background-color: transparent;
+    --ion-border-color: var(--ion-color-primary);
+    --ion-padding: 0;
+    --ion-margin: 0;
+
+    ion-input {
+      color: white;
+      font-size: 1.5em;
+    }
+
+    ion-label {
+      font-size: 1.5em;
+    }
+  }
+
+  ion-button {
+    width: 75%;
+    font-size: 1.15em;
+  }
+
+  #btn-sign-in-facebook button {
+    --ion-background: blue;
+  }
+}
+
+.container::before {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) -43%,
+    rgba(0, 0, 0, 0.9) 70%
+  );
+}

@@ -1,4 +1,3 @@
-import { AppUser } from './../app-user.model';
 import { AuthService } from './../auth.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -9,13 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginPage implements OnInit {
 
-  user: AppUser;
-
-  constructor(private authService: AuthService) {
-    authService.getCurrentUser.subscribe(u => {
-      this.user = u;
-    });
-  }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
   }
