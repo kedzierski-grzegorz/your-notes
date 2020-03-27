@@ -1,0 +1,8 @@
+<p
+  *ngIf="
+    formControl.touched && formControl.errors && formControl.invalid && errors
+  "
+  class="input-error-field"
+>
+  {{ errorMessage }}
+</p>

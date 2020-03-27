@@ -9,6 +9,22 @@
   justify-content: center;
   align-items: center;
 
+  ion-img {
+    z-index: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    margin-bottom: 4em;
+    margin-top: 4em;
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   h1 {
     color: white;
     opacity: 0.87;
@@ -22,7 +38,7 @@
 
   ion-item {
     margin-bottom: 1em;
-    width: 75%;
+    width: 74%;
     background-color: transparent;
     --ion-background-color: transparent;
     --ion-border-color: var(--ion-color-primary);
@@ -31,21 +47,25 @@
 
     ion-input {
       color: white;
-      font-size: 1.5em;
+      font-size: 1.4em;
     }
 
     ion-label {
-      font-size: 1.5em;
+      font-size: 1.4em;
     }
   }
 
   ion-button {
-    width: 75%;
-    font-size: 1.15em;
+    width: 74%;
+    font-size: 1.1em;
   }
 
-  #btn-sign-in-facebook button {
-    --ion-background: blue;
+  #btn-sign-in-facebook {
+    --background: #3b5998;
+  }
+
+  #btn-sign-in-google {
+    --background: #db4a39;
   }
 }
 
@@ -57,9 +77,28 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.9);
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) -43%,
-    rgba(0, 0, 0, 0.9) 70%
-  );
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0) -43%,
+      rgba(0, 0, 0, 0.9) 70%);
+}
+
+@media(min-width: 1024px) {
+  .container {
+    background-position: center;
+    padding: 0 32vw;
+
+    ion-item {
+      ion-input {
+        font-size: 1.05em;
+      }
+
+      ion-label {
+        font-size: 1.05em;
+      }
+    }
+
+    ion-button {
+      font-size: .85em;
+    }
+  }
 }

@@ -1,40 +1,57 @@
 <ion-content>
   <div class="container">
-    <h1>Your Notes</h1>
-    <ion-item class="ion-no-padding">
-      <ion-label position="floating" color="light">Email</ion-label>
-      <ion-input type="email" id="input-email"></ion-input>
-    </ion-item>
-    <ion-item class="ion-no-padding">
-      <ion-label position="floating" color="light">Hasło</ion-label>
-      <ion-input type="password" id="input-password"></ion-input>
-    </ion-item>
-    <ion-button
-      id="btn-sign-in-email"
-      (click)="test()"
-      class="ion-margin-vertical"
-    >
-      Zaloguj się
-    </ion-button>
+    <ion-img src="assets/logo/logo-light.svg"></ion-img>
+    <form [formGroup]="formGroup">
+      <ion-item
+        class="ion-no-padding"
+        [appInputError]="formGroup.controls.email"
+        [appInputErrorMessages]="errors.email"
+      >
+        <ion-label position="floating" color="light">Email</ion-label>
+        <ion-input
+          formControlName="email"
+          type="email"
+          id="input-email"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item
+        class="ion-no-padding ion-margin-bottom"
+        [appInputError]="formGroup.controls.password"
+        [appInputErrorMessages]="errors.password"
+      >
+        <ion-label position="floating" color="light">Hasło</ion-label>
+        <ion-input
+          formControlName="password"
+          type="password"
+          id="input-password"
+        ></ion-input>
+      </ion-item>
+
+      <ion-button
+        id="btn-sign-in-email"
+        (click)="signInWithEmail()"
+        class="ion-margin-vertical"
+        type="submit"
+      >
+        Zaloguj się
+      </ion-button>
+    </form>
     <ion-button
       [routerLink]="['/sign-up']"
       class="ion-margin-vertical"
       fill="outline"
-      color="medium"
+      color="primary"
     >
       Załóż konto
     </ion-button>
-    <ion-button
-      id="btn-sign-in-facebook"
-      (click)="test2()"
-      class="ion-margin-vertical"
-    >
+    <ion-button id="btn-sign-in-facebook" (click)="signInWithFacebook()">
       <ion-label>Zaloguj przez </ion-label>
       <ion-icon name="logo-facebook" slot="end" class="ion-margin"></ion-icon>
     </ion-button>
     <ion-button
       id="btn-sign-in-google"
-      (click)="test3()"
+      (click)="signInWithGoogle()"
       class="ion-margin-vertical"
     >
       <ion-label>Zaloguj przez </ion-label>
