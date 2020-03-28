@@ -1,7 +1,7 @@
 <ion-content>
   <div class="container">
     <ion-img src="assets/logo/logo-light.svg"></ion-img>
-    <form [formGroup]="formGroup">
+    <form [formGroup]="formGroup" (keydown.enter)="signInWithEmail()">
       <ion-item
         class="ion-no-padding"
         [appInputError]="formGroup.controls.email"
@@ -10,9 +10,11 @@
         <ion-label position="floating" color="light">Email</ion-label>
         <ion-input
           formControlName="email"
+          name="email"
           type="email"
           id="input-email"
           maxlength="80"
+          autocomplete="on"
         ></ion-input>
       </ion-item>
 
@@ -24,6 +26,7 @@
         <ion-label position="floating" color="light">Hasło</ion-label>
         <ion-input
           formControlName="password"
+          name="password"
           type="password"
           id="input-password"
           maxlength="80"
@@ -32,9 +35,8 @@
 
       <ion-button
         id="btn-sign-in-email"
-        (click)="signInWithEmail()"
         class="ion-margin-vertical"
-        type="submit"
+        (click)="signInWithEmail()"
       >
         Zaloguj się
       </ion-button>
