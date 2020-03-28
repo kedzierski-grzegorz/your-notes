@@ -1,3 +1,4 @@
+import { NavController } from '@ionic/angular';
 import { ValidatorsService } from './../../shared/validators.service';
 import { AuthService } from './../auth.service';
 import { Component, OnInit } from '@angular/core';
@@ -22,19 +23,13 @@ export class LoginPage implements OnInit {
 
   formGroup: FormGroup;
 
-  constructor(private authService: AuthService, private formBuilder: FormBuilder) { }
+  constructor(private authService: AuthService, private formBuilder: FormBuilder, private nav: NavController) { }
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({
       email: ['', [Validators.required, ValidatorsService.emailValidator]],
       password: ['', [Validators.required]]
     });
-  }
-
-  signInWithFacebook() {
-    this.authService.signInWithFacebook().then(x => {
-      console.log(x);
-    }).catch(e => console.log(e));
   }
 
   signInWithEmail() {
@@ -45,13 +40,19 @@ export class LoginPage implements OnInit {
     }
 
     this.authService.signInWithEmail('test@test.pl', 'password123').then(x => {
-      console.log(x);
+      this.nav.navigateForward(['/home']);
+    }).catch(e => console.log(e));
+  }
+
+  signInWithFacebook() {
+    this.authService.signInWithFacebook().then(x => {
+      this.nav.navigateForward(['/home']);
     }).catch(e => console.log(e));
   }
 
   signInWithGoogle() {
     this.authService.signInWithGoogle().then(x => {
-      console.log(x);
+      this.nav.navigateForward(['/home']);
     }).catch(e => console.log(e));
   }
 }

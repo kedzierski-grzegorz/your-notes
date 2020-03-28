@@ -23,7 +23,8 @@ fdescribe('LoginPage', () => {
     TestBed.configureTestingModule({
       declarations: [LoginPage],
       providers: [
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: NavController, useValue: { navigateForward: (url: any[]) => { } } }
       ],
       imports: [IonicModule.forRoot(), RouterTestingModule, FormsModule, ReactiveFormsModule]
     }).compileComponents();
@@ -69,6 +70,26 @@ fdescribe('LoginPage', () => {
 
       expect(component.formGroup.touched).toBeTruthy();
       expect(component.formGroup.valid).toBeTruthy();
+    });
+
+    describe('password field', () => {
+      it('when password is empty should has invalid password', () => {
+        component.formGroup.controls.password.setValue('');
+
+        btnSignInEmail.nativeElement.click();
+        fixture.detectChanges();
+
+        expect(component.formGroup.controls.password.invalid).toBeTruthy();
+      });
+
+      it('when password is filled should has valid password', () => {
+        component.formGroup.controls.password.setValue('test!@$#@%}{":?<>ZCXćźżśąę');
+
+        btnSignInEmail.nativeElement.click();
+        fixture.detectChanges();
+
+        expect(component.formGroup.controls.password.valid).toBeTruthy();
+      });
     });
 
     describe('email field', () => {
@@ -124,6 +145,24 @@ fdescribe('LoginPage', () => {
         fixture.detectChanges();
 
         expect(component.formGroup.controls.email.invalid).toBeTruthy();
+      });
+
+      it('when email is test@s_-s.d.pl should has invalid email', () => {
+        component.formGroup.controls.email.setValue('test@s_-s.d.pl');
+
+        btnSignInEmail.nativeElement.click();
+        fixture.detectChanges();
+
+        expect(component.formGroup.controls.email.invalid).toBeTruthy();
+      });
+
+      it('when email is test@ss.d.pl should has invalid email', () => {
+        component.formGroup.controls.email.setValue('test@ss.d.pl');
+
+        btnSignInEmail.nativeElement.click();
+        fixture.detectChanges();
+
+        expect(component.formGroup.controls.email.valid).toBeTruthy();
       });
     });
   });
