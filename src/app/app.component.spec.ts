@@ -1,3 +1,4 @@
+import { UpdateService } from './shared/services/update/update.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed, async } from '@angular/core/testing';
 
@@ -24,6 +25,7 @@ describe('AppComponent', () => {
         { provide: StatusBar, useValue: statusBarSpy },
         { provide: SplashScreen, useValue: splashScreenSpy },
         { provide: Platform, useValue: platformSpy },
+        { provide: UpdateService, useValue: { checkUpdate: () => { } } }
       ],
     }).compileComponents();
   }));

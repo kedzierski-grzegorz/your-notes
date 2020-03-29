@@ -8,7 +8,7 @@ import { LoginPage } from './login.page';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-fdescribe('LoginPage', () => {
+describe('LoginPage', () => {
   let component: LoginPage;
   let fixture: ComponentFixture<LoginPage>;
   let btnSignInEmail: DebugElement;

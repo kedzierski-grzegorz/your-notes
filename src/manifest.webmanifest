@@ -1,9 +1,10 @@
 {
   "name": "YourNotes",
   "short_name": "YourNotes",
-  "theme_color": "#1976d2",
+  "theme_color": "#8c6640",
   "background_color": "#fafafa",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "scope": "./",
   "start_url": "./",
   "icons": [

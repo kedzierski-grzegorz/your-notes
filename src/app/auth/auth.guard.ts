@@ -20,7 +20,14 @@ export class AuthGuard implements CanActivateChild {
         return false;
       }
 
-      if (user !== null || state.url === '/login' || state.url === '/sign-up') {
+      if (user !== null) {
+        if (!user?.displayName) {
+          alert('test');
+        }
+        return true;
+      }
+
+      if (state.url === '/login' || state.url === '/sign-up') {
         return true;
       }
 

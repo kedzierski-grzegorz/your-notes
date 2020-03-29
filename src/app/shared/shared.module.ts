@@ -1,14 +1,18 @@
+import { UserService } from './services/user/user.service';
+import { UpdateModalComponent } from './components/update-modal/update-modal.component';
 import { ValidatorsService } from './validators.service';
 import { InputErrorFieldComponent } from './components/input-error-field/input-error-field.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputErrorDirective } from './directives/input-error/input-error.directive';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UpdateService } from './services/update/update.service';
 
 @NgModule({
-  declarations: [InputErrorDirective, InputErrorFieldComponent],
+  declarations: [InputErrorDirective, InputErrorFieldComponent, UpdateModalComponent],
   entryComponents: [
-    InputErrorFieldComponent
+    InputErrorFieldComponent,
+    UpdateModalComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +24,9 @@ import { CommonModule } from '@angular/common';
     InputErrorDirective
   ],
   providers: [
-    ValidatorsService
+    ValidatorsService,
+    UpdateService,
+    UserService
   ]
 })
 export class SharedModule { }

@@ -39,6 +39,8 @@ export class LoginPage implements OnInit {
   }
 
   signInWithEmail() {
+    document.body.focus();
+
     this.formGroup.markAllAsTouched();
 
     if (this.formGroup.invalid) {
@@ -109,6 +111,9 @@ export class LoginPage implements OnInit {
         break;
       case 'auth/too-many-requests':
         messageText = 'Zbyt wiele nieudanych prób logowania. Prosimy spróbować później.';
+        break;
+      case 'auth/network-request-failed':
+        messageText = 'Problem z połączeniem z internetem.';
         break;
     }
 

@@ -24,6 +24,9 @@ export class AuthService {
   get authState$(): Observable<User> {
     return this.fireAuth.authState.pipe(map((user: User) => {
       if (user) {
+        if (this.currentUser == null) {
+          this.refreshUserData();
+        }
         return user;
       } else {
         this.currentUser = null;
@@ -95,7 +98,7 @@ export class AuthService {
             } else {
               this.currentUser = null;
               this.currentUserSub.next(this.currentUser);
-              reject(new Error('The user does not exist in the database.'));
+              resolve(this.currentUserSub.asObservable());
             }
           }).catch(e => reject(e));
       } else {
