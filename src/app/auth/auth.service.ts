@@ -41,77 +41,62 @@ export class AuthService {
     private firestore: AngularFirestore
   ) { }
 
-  signInWithEmail(email: string, password: string): Promise<Observable<AppUser>> {
-    return this.signOut().then(r => {
-      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
-        return this.fireAuth.signInWithEmailAndPassword(email, password).then(credentials => {
-          return this.refreshUserData();
-        }).catch(e => Promise.reject(e));
-      }).catch(e => Promise.reject(e));
-    }).catch(e => Promise.reject(e));
+  async signInWithEmail(email: string, password: string): Promise<Observable<AppUser>> {
+    await this.signOut();
+    await this.fireAuth.setPersistence(this.PERSISTANCE);
+    await this.fireAuth.signInWithEmailAndPassword(email, password);
+    return this.refreshUserData();
   }
 
-  signUpWithEmail(email: string, password: string): Promise<Observable<AppUser>> {
-    return this.signOut().then(r => {
-      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
-        return this.fireAuth.createUserWithEmailAndPassword(email, password).then(credentials => {
-          return this.refreshUserData();
-        }).catch(e => Promise.reject(e));
-      }).catch(e => Promise.reject(e));
-    }).catch(e => Promise.reject(e));
+  async signUpWithEmail(email: string, password: string): Promise<Observable<AppUser>> {
+    await this.signOut();
+    await this.fireAuth.setPersistence(this.PERSISTANCE);
+    await this.fireAuth.createUserWithEmailAndPassword(email, password);
+    return this.refreshUserData();
   }
 
-  signInWithGoogle(): Promise<Observable<AppUser>> {
-    return this.signOut().then(r => {
-      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
-        return this.fireAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(u => {
-          return this.refreshUserData();
-        }).catch(e => Promise.reject(e));
-      }).catch(e => Promise.reject(e));
-    }).catch(e => Promise.reject(e));
+  async signInWithGoogle(): Promise<Observable<AppUser>> {
+    await this.signOut();
+    await this.fireAuth.setPersistence(this.PERSISTANCE);
+    await this.fireAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    return this.refreshUserData();
   }
 
-  signInWithFacebook(): Promise<Observable<AppUser>> {
-    return this.signOut().then(r => {
-      return this.fireAuth.setPersistence(this.PERSISTANCE).then(() => {
-        return this.fireAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider()).then(u => {
-          return this.refreshUserData();
-        }).catch(e => Promise.reject(e));
-      }).catch(e => Promise.reject(e));
-    }).catch(e => Promise.reject(e));
+  async signInWithFacebook(): Promise<Observable<AppUser>> {
+    await this.signOut();
+    await this.fireAuth.setPersistence(this.PERSISTANCE);
+    await this.fireAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
+    return this.refreshUserData();
   }
 
-  refreshUserData(): Promise<Observable<AppUser>> {
+  async refreshUserData(): Promise<Observable<AppUser>> {
     const appUser: AppUser = {};
 
-    return new Promise((resolve, reject) => this.fireAuth.authState.pipe(first()).toPromise().then(user => {
-      if (user && user.uid) {
-        this.firestore.collection('users').doc(user.uid).get().pipe(map(data => data.data()), take(1)).toPromise()
-          .then(userDetails => {
-            if (userDetails) {
-              appUser.firebaseUser = user;
-              appUser.subscriptionDateEnd = userDetails.subscriptionDateEnd;
-              appUser.schoolRef = userDetails.schoolRef;
-              this.currentUser = appUser;
-              this.currentUserSub.next(this.currentUser);
-              resolve(this.currentUserSub.asObservable());
-            } else {
-              this.currentUser = null;
-              this.currentUserSub.next(this.currentUser);
-              resolve(this.currentUserSub.asObservable());
-            }
-          }).catch(e => reject(e));
+    const fireUser = await this.fireAuth.authState.pipe(first()).toPromise();
+    if (fireUser && fireUser.uid) {
+      const firestoreUser
+        = await this.firestore.collection('users').doc(fireUser.uid).get().pipe(map(data => data.data()), take(1)).toPromise();
+
+      if (firestoreUser) {
+        appUser.firebaseUser = fireUser;
+        appUser.subscriptionDateEnd = firestoreUser.subscriptionDateEnd;
+        appUser.schoolRef = firestoreUser.schoolRef;
+        this.currentUser = appUser;
+        this.currentUserSub.next(this.currentUser);
+        return this.currentUserSub.asObservable();
       } else {
-        reject(new Error('User is not logged in'));
+        this.currentUser = null;
+        this.currentUserSub.next(this.currentUser);
+        return this.currentUserSub.asObservable();
       }
-    }).catch(e => reject(e)));
+    } else {
+      throw new Error('User is not logged in');
+    }
   }
 
-  signOut(): Promise<void> {
-    return this.fireAuth.signOut().then(r => {
-      this.currentUser = null;
-      this.currentUserSub.next(this.currentUser);
-      return Promise.resolve();
-    }).catch(e => Promise.reject(e));
+  async signOut(): Promise<void> {
+    await this.fireAuth.signOut();
+    this.currentUser = null;
+    this.currentUserSub.next(this.currentUser);
   }
 }
