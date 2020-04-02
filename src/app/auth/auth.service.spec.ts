@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { of } from 'rxjs';
 
-fdescribe('AuthService', () => {
+describe('AuthService', () => {
   let fireAuthSpyObj: jasmine.SpyObj<AngularFireAuth>;
 
   let service: AuthService;

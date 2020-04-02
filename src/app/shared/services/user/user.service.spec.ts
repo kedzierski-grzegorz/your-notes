@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
 
-fdescribe('UserService', () => {
+describe('UserService', () => {
   let authServiceSpyObj: jasmine.SpyObj<AuthService>;
   let fireAuthSpyObj: jasmine.SpyObj<AngularFireAuth>;
   let firestoreSpyObj: jasmine.SpyObj<AngularFirestore>;
@@ -315,6 +315,108 @@ fdescribe('UserService', () => {
       expect(result).toBeTruthy();
       expect(firestoreSpyObj.collection).toHaveBeenCalled();
       expect(fireAuthSpyObj.updateCurrentUser).toHaveBeenCalled();
+    });
+
+    it('only fire auth was updated should return observable and call only fire auth update succesfully', async () => {
+      const service = TestBed.get(UserService) as UserService;
+
+      spyOn(service, 'checkIfWasUdpatedFireAutheData').and.returnValue(Promise.resolve(true));
+      spyOn(service, 'checkIfWasUdpatedFirestoreData').and.returnValue(Promise.resolve(false));
+
+      firestoreSpyObj.collection.and.returnValue({
+        doc: () => ({
+          update: () => Promise.resolve()
+        })
+      } as any);
+
+      fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.resolve());
+      authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
+
+      const result = await service.updateUser(user);
+
+      expect(result).toBeTruthy();
+      expect(firestoreSpyObj.collection).toHaveBeenCalledTimes(0);
+      expect(fireAuthSpyObj.updateCurrentUser).toHaveBeenCalled();
+    });
+
+    it('only firestore was updated should return observable and call only firestore update succesfully', async () => {
+      const service = TestBed.get(UserService) as UserService;
+
+      spyOn(service, 'checkIfWasUdpatedFireAutheData').and.returnValue(Promise.resolve(false));
+      spyOn(service, 'checkIfWasUdpatedFirestoreData').and.returnValue(Promise.resolve(true));
+
+      firestoreSpyObj.collection.and.returnValue({
+        doc: () => ({
+          update: () => Promise.resolve()
+        })
+      } as any);
+
+      fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.resolve());
+      authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
+
+      const result = await service.updateUser(user);
+
+      expect(result).toBeTruthy();
+      expect(firestoreSpyObj.collection).toHaveBeenCalled();
+      expect(fireAuthSpyObj.updateCurrentUser).toHaveBeenCalledTimes(0);
+    });
+
+    it('nothing was changed should return observable and not call any update', async () => {
+      const service = TestBed.get(UserService) as UserService;
+
+      spyOn(service, 'checkIfWasUdpatedFireAutheData').and.returnValue(Promise.resolve(false));
+      spyOn(service, 'checkIfWasUdpatedFirestoreData').and.returnValue(Promise.resolve(false));
+
+      firestoreSpyObj.collection.and.returnValue({
+        doc: () => ({
+          update: () => Promise.resolve()
+        })
+      } as any);
+
+      fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.resolve());
+      authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
+
+      const result = await service.updateUser(user);
+
+      expect(result).toBeTruthy();
+      expect(firestoreSpyObj.collection).toHaveBeenCalledTimes(0);
+      expect(fireAuthSpyObj.updateCurrentUser).toHaveBeenCalledTimes(0);
+    });
+
+    it('all data was changed but fire auth throws should throw an error', async () => {
+      const service = TestBed.get(UserService) as UserService;
+
+      spyOn(service, 'checkIfWasUdpatedFireAutheData').and.returnValue(Promise.resolve(true));
+      spyOn(service, 'checkIfWasUdpatedFirestoreData').and.returnValue(Promise.resolve(true));
+
+      firestoreSpyObj.collection.and.returnValue({
+        doc: () => ({
+          update: () => Promise.resolve()
+        })
+      } as any);
+
+      fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.reject());
+      authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
+
+      expectAsync(service.updateUser(user)).toBeRejected();
+    });
+
+    it('all data was changed but firestore throws should throw an error', async () => {
+      const service = TestBed.get(UserService) as UserService;
+
+      spyOn(service, 'checkIfWasUdpatedFireAutheData').and.returnValue(Promise.resolve(true));
+      spyOn(service, 'checkIfWasUdpatedFirestoreData').and.returnValue(Promise.resolve(true));
+
+      firestoreSpyObj.collection.and.returnValue({
+        doc: () => ({
+          update: () => Promise.reject()
+        })
+      } as any);
+
+      fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.resolve());
+      authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
+
+      expectAsync(service.updateUser(user)).toBeRejected();
     });
   });
 });
