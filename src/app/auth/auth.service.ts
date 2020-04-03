@@ -1,4 +1,4 @@
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { AppUser } from './app-user.model';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -7,6 +7,7 @@ import { first, map, take } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from 'firebase';
+import { ProfilePage } from '../profile/profile.page';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,8 @@ export class AuthService {
 
   constructor(
     private fireAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private modalController: ModalController
   ) { }
 
   async signInWithEmail(email: string, password: string): Promise<Observable<AppUser>> {
@@ -85,6 +87,12 @@ export class AuthService {
         this.currentUserSub.next(this.currentUser);
         return this.currentUserSub.asObservable();
       } else {
+        const modal = await this.modalController.create({
+          component: ProfilePage,
+          backdropDismiss: false
+        });
+
+        modal.present();
         this.currentUser = null;
         this.currentUserSub.next(this.currentUser);
         return this.currentUserSub.asObservable();

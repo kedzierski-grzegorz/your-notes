@@ -1,3 +1,4 @@
+import { ModalController } from '@ionic/angular';
 import { User } from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { TestBed, fakeAsync } from '@angular/core/testing';
@@ -8,6 +9,7 @@ import { of } from 'rxjs';
 
 describe('AuthService', () => {
   let fireAuthSpyObj: jasmine.SpyObj<AngularFireAuth>;
+  let modalControllerSpyObj: jasmine.SpyObj<ModalController>;
 
   let service: AuthService;
   const testEmail = 'test@test.pl';
@@ -25,10 +27,13 @@ describe('AuthService', () => {
       authState: of(null)
     };
 
+    modalControllerSpyObj = jasmine.createSpyObj('ModalController', ['create']);
+
     TestBed.configureTestingModule({
       providers: [
         { provide: AngularFireAuth, useValue: fireAuthSpyObj },
-        { provide: AngularFirestore, useValue: { collection: () => { } } }
+        { provide: AngularFirestore, useValue: { collection: () => { } } },
+        { provide: ModalController, useValue: modalControllerSpyObj }
       ]
     });
 
@@ -167,7 +172,7 @@ describe('AuthService', () => {
         value: of({ uid: '12345' } as User)
       });
 
-      service = new AuthService(fireAuthSpyObj, TestBed.get(AngularFirestore));
+      service = new AuthService(fireAuthSpyObj, TestBed.get(AngularFirestore), modalControllerSpyObj);
 
       spyOn(TestBed.get(AngularFirestore), 'collection').and.returnValue({
         doc: s => ({ get: () => ({ pipe: () => ({ toPromise: () => Promise.reject(new Error('There is no user in db of the id')) }) }) })
@@ -176,14 +181,14 @@ describe('AuthService', () => {
       expectAsync(service.refreshUserData()).toBeRejectedWith(new Error('There is no user in db of the id'));
     }));
 
-    it('when user is logged in should return appUser', fakeAsync(() => {
+    it('when user is logged in user exists in db should return appUser', fakeAsync(() => {
       let user;
 
       Object.defineProperty(fireAuthSpyObj, 'authState', {
         value: of({ uid: '12345' } as User)
       });
 
-      service = new AuthService(fireAuthSpyObj, TestBed.inject(AngularFirestore));
+      service = new AuthService(fireAuthSpyObj, TestBed.inject(AngularFirestore), modalControllerSpyObj);
       let userObs = service.getCurrentUser.subscribe(u => {
         user = u;
       });
@@ -210,5 +215,36 @@ describe('AuthService', () => {
       });
     }));
 
+    it('when user is logged in but user does not exist in db should return null and show modal to create profile', fakeAsync(() => {
+      let user;
+
+      modalControllerSpyObj.create.and.returnValue(Promise.resolve({ present: () => Promise.resolve() } as any));
+
+      Object.defineProperty(fireAuthSpyObj, 'authState', {
+        value: of({ uid: '12345' } as User)
+      });
+
+      service = new AuthService(fireAuthSpyObj, TestBed.inject(AngularFirestore), modalControllerSpyObj);
+      let userObs = service.getCurrentUser.subscribe(u => {
+        user = u;
+      });
+
+      spyOn(TestBed.get(AngularFirestore), 'collection').and.returnValue({
+        doc: () => ({
+          get: () => ({
+            pipe: () => ({
+              toPromise: () => Promise.resolve(null)
+            })
+          })
+        }
+        )
+      });
+
+      service.refreshUserData().then(s => {
+        expect(modalControllerSpyObj.create).toHaveBeenCalled();
+        expect(user).toBeNull();
+        userObs.unsubscribe();
+      });
+    }));
   });
 });

@@ -21,9 +21,6 @@ export class AuthGuard implements CanActivateChild {
       }
 
       if (user !== null) {
-        if (!user?.displayName) {
-          // alert('test');
-        }
         return true;
       }
 

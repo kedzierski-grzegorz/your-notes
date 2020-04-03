@@ -398,7 +398,7 @@ describe('UserService', () => {
       fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.reject());
       authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
 
-      expectAsync(service.updateUser(user)).toBeRejected();
+      await expectAsync(service.updateUser(user)).toBeRejected();
     });
 
     it('all data was changed but firestore throws should throw an error', async () => {
@@ -416,7 +416,7 @@ describe('UserService', () => {
       fireAuthSpyObj.updateCurrentUser.and.returnValue(Promise.resolve());
       authServiceSpyObj.refreshUserData.and.returnValue(Promise.resolve(of(user)));
 
-      expectAsync(service.updateUser(user)).toBeRejected();
+      await expectAsync(service.updateUser(user)).toBeRejected();
     });
   });
 });
