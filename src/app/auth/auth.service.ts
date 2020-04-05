@@ -87,12 +87,16 @@ export class AuthService {
         this.currentUserSub.next(this.currentUser);
         return this.currentUserSub.asObservable();
       } else {
-        const modal = await this.modalController.create({
-          component: ProfilePage,
-          backdropDismiss: false
-        });
+        if (!document.querySelector('.create-profile-modal')) {
+          const modal = await this.modalController.create({
+            component: ProfilePage,
+            backdropDismiss: false,
+            cssClass: 'create-profile-modal'
+          });
 
-        modal.present();
+          modal.present();
+        }
+
         this.currentUser = null;
         this.currentUserSub.next(this.currentUser);
         return this.currentUserSub.asObservable();

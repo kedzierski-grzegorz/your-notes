@@ -1,3 +1,4 @@
+import { SchoolsService } from './services/schools/schools.service';
 import { UserService } from './services/user/user.service';
 import { UpdateModalComponent } from './components/update-modal/update-modal.component';
 import { ValidatorsService } from './validators.service';
@@ -26,7 +27,8 @@ import { UpdateService } from './services/update/update.service';
   providers: [
     ValidatorsService,
     UpdateService,
-    UserService
+    UserService,
+    SchoolsService
   ]
 })
 export class SharedModule { }
