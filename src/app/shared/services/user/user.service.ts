@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthService } from './../../../auth/auth.service';
-import { AppUser } from './../../../auth/app-user.model';
+import { AppUser } from './../../../models/app-user.model';
 import { Injectable } from '@angular/core';
 import { User } from 'firebase';
 

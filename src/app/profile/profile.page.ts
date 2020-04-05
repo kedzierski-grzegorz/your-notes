@@ -1,6 +1,6 @@
 import { ValidatorsService } from './../shared/validators.service';
 import { Subscription } from 'rxjs';
-import { AppUser } from './../auth/app-user.model';
+import { AppUser } from './../models/app-user.model';
 import { AuthService } from './../auth/auth.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';

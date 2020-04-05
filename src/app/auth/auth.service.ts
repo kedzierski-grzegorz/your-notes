@@ -1,5 +1,5 @@
 import { Platform, ModalController } from '@ionic/angular';
-import { AppUser } from './app-user.model';
+import { AppUser } from '../models/app-user.model';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
